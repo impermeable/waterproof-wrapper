@@ -1,0 +1,5 @@
+# Run doxygen doc/Doxyfile while in the project root to generate documentation.
+
+*
+!.gitignore
+!Doxyfile

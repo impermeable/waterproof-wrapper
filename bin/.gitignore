@@ -1,0 +1,4 @@
+# After each build, binaries will be copied here.
+
+*
+!.gitignore

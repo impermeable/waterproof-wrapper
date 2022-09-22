@@ -1,0 +1,14 @@
+## CLion config and build output dirs.
+.idea/
+
+cmake-build-macos-x64-debug
+cmake-build-macos-x64-release
+cmake-build-ubuntu-x64-debug
+cmake-build-ubuntu-x64-release
+cmake-build-windows-x64-debug
+cmake-build-windows-x64-release
+cmake-build-ubuntu-x64-vm-debug
+
+## VSCode config and build output dirs.
+.vscode/
+build/
