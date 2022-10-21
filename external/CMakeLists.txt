@@ -5,18 +5,6 @@ include(helper.cmake)
 
 message(STATUS "Checking project dependencies")
 
-# GoogleTest and GoogleMock
-fetchcontent_declare(
-        googletest
-        GIT_REPOSITORY https://github.com/google/googletest.git
-        GIT_TAG release-1.8.1
-)
-
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-fetchcontent_getproperties(googletest)
-fetchcontenthelper_check(googletest)
-
 # fmt
 fetchcontent_declare(
         fmt
