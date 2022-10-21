@@ -9,7 +9,7 @@ message(STATUS "Checking project dependencies")
 fetchcontent_declare(
         fmt
         GIT_REPOSITORY https://github.com/fmtlib/fmt
-        GIT_TAG 5.3.0
+        GIT_TAG 8.1.1
 )
 
 fetchcontent_getproperties(fmt)
@@ -19,7 +19,7 @@ fetchcontenthelper_check(fmt)
 fetchcontent_declare(
         spdlog
         GIT_REPOSITORY https://github.com/gabime/spdlog.git
-        GIT_TAG v1.x
+        GIT_TAG v1.9.2
 )
 
 set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
