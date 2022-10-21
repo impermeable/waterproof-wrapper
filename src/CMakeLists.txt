@@ -40,11 +40,13 @@ set(
 
 if (UNIX)
     add_compile_definitions(WPWRAPPER_POSIX=1)
-elseif (MINGW)
+elseif (MINGW OR MSVC)
     # Explicitly target Windows 10. This allows us to use features that are only available on newer versions of Windows.
     add_definitions(-D_WIN32_WINNT=0x0A00 -DWIN32_LEAN_AND_MEAN)
     add_compile_definitions(WPWRAPPER_WIN=1)
-endif ()
+else()
+    message(FATAL_ERROR "Unknown platform cannot continue")
+endif()
 
 # Library target.
 add_library(
@@ -58,10 +60,13 @@ add_library(
 
 # Dependencies are linked publicly so they can be used by the executable too.
 # On Unix systems, we need to link pthread too.
+target_link_libraries(wpwrapper_lib PUBLIC spdlog::spdlog fmt::fmt nlohmann_json::nlohmann_json)
 if (UNIX)
-    target_link_libraries(wpwrapper_lib PUBLIC spdlog::spdlog fmt::fmt nlohmann_json::nlohmann_json pthread)
-else ()
-    target_link_libraries(wpwrapper_lib PUBLIC spdlog::spdlog fmt::fmt nlohmann_json::nlohmann_json pthread wsock32 ws2_32)
+    target_link_libraries(wpwrapper_lib PUBLIC pthread)
+elseif (MINGW)
+    target_link_libraries(wpwrapper_lib PUBLIC pthread wsock32 ws2_32)
+elseif (MSVC)
+    target_link_libraries(wpwrapper_lib PUBLIC wsock32 ws2_32)
 endif ()
 
 # Executable target.
