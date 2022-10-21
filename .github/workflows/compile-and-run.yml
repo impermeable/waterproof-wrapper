@@ -1,0 +1,66 @@
+name: compile-and-run
+on: [push, workflow_dispatch, pull_request]
+
+jobs:
+  build-compile-test:
+    name: Build & Test on ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: [ Release ]
+        config:
+          - {
+            compiler: clang++,
+            os: ubuntu-latest,
+          }
+          - {
+            compiler: cl.exe,
+            os: windows-latest,
+          }
+          - {
+            compiler: clang++,
+            os: macos-latest,
+          }
+    env:
+      build_folder_location: build
+    runs-on: ${{ matrix.config.os }}
+    steps:
+      - uses: actions/checkout@v3.1.0
+
+      - name: Install Dependencies (Ubuntu)
+        if: startsWith(matrix.config.os, 'ubuntu')
+        run: |
+          sudo apt-get install ninja-build ccache
+          ${{ matrix.config.compiler }} --version && cmake --version && ninja --version && ccache --version
+
+      - name: Install Dependencies (Windows)
+        if: startsWith(matrix.config.os, 'windows')
+        run: |
+          pip install ninja
+
+      - name: Install Dependencies (macOS)
+        if: startsWith(matrix.config.os, 'macos')
+        run: |
+          brew install ninja
+
+      - name: Configure MSVC console (Windows)
+        if: startsWith(matrix.config.os, 'windows') && contains(matrix.config.compiler, 'exe')
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Make build folder
+        run: mkdir -p ${{ env.build_folder_location }}
+
+      - name: Setup build
+        run: >
+          cmake -S . -B ${{ env.build_folder_location }} -G Ninja
+          -DCMAKE_CXX_COMPILER="${{ matrix.config.compiler }}"
+          -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        timeout-minutes: 60
+        run: cmake --build ${{ env.build_folder_location }}
+
+      - name: Upload builds
+        uses: actions/upload-artifact@v3
+        with:
+          name: 'Wrapper for ${{ matrix.config.os }}'
+          path: ${{ env.build_folder_location }}/src/wpwrapper*
