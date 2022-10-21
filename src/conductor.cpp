@@ -211,6 +211,9 @@ void conductor::handle_request(const wpwrapper::request& request)
     case request::verb::forward:
         workers_[request.instance_id_]->enqueue(request.content_);
         break;
+    case request::verb::interrupt:
+        workers_[request.instance_id_]->interrupt();
+        break;
     case request::verb::stop:
         logger_->debug("received stop signal");
         signal_received_ = true;

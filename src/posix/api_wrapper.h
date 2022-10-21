@@ -73,6 +73,8 @@ public:
     pid_t waitpid(pid_t pid, int* wstatus, int options) const noexcept override;
 
     ssize_t write(int fd, const void* buf, size_t count) const noexcept override;
+
+    int interrupt(pid_t pid) const noexcept override;
 };
 
 } // namespace wpwrapper

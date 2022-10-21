@@ -140,4 +140,10 @@ ssize_t api_wrapper::write(int fd, const void* buf, size_t count) const noexcept
     return ::write(fd, buf, count);
 }
 
+int api_wrapper::interrupt(const pid_t pid) const noexcept
+{
+  return ::kill(pid, SIGINT);
+}
+
+
 } // namespace wpwrapper

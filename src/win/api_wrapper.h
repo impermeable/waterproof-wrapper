@@ -99,6 +99,7 @@ public:
 
     int WSAStartup(WORD wVersionRequired, LPWSADATA lpWSAData) const noexcept override;
 
+    int GenerateConsoleCtrlEvent(DWORD pid) const noexcept override;
 };
 
 } // namespace wpwrapper

@@ -106,6 +106,7 @@ worker::worker(unsigned int id, const std::string& sertop_path, const std::vecto
         }
     }
 
+    logger_->info("parent starting worker thread... {}", sertop_instance_);
     // We're the parent process.
 
     // We can't / won't read from sertop's stdin nor write to its stdout.
@@ -324,6 +325,15 @@ void worker::read_loop() noexcept
     }
 
     logger_->debug("stopped read loop");
+}
+
+void worker::interrupt()
+{
+    logger_->debug("interrupting worker with pid: {}", sertop_instance_);
+    if (api_->interrupt(sertop_instance_) != 0)
+    {
+        logger_->warn("interrupt failed with: {}", errno);
+    }
 }
 
 } // namespace wpwrapper

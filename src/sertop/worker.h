@@ -86,6 +86,9 @@ public:
     /// \param message The message to add.
     void enqueue(const std::string& message);
 
+    /// \brief Interrupt the worker by sending a SIGINT/CTRL^C signal
+    void interrupt();
+
 private:
 
 #ifdef WPWRAPPER_WIN
@@ -162,6 +165,8 @@ private:
     HANDLE pipe_sertop_end_;
     /// \brief Handle to the sertop process.
     HANDLE sertop_instance_;
+    /// \brief Process id of sertop process
+    DWORD sertop_pid_;
 
     /// \brief Event that is set when the read loop needs to be interrupted.
     HANDLE interrupt_event_;

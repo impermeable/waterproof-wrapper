@@ -134,6 +134,9 @@ public:
 
     /// \see https://docs.microsoft.com/en-us/windows/desktop/api/winsock/nf-winsock-wsastartup
     virtual int WSAStartup(WORD wVersionRequired, LPWSADATA lpWSAData) const noexcept = 0;
+
+    /// \see https://docs.microsoft.com/en-us/windows/console/generateconsolectrlevent
+    virtual int GenerateConsoleCtrlEvent(DWORD pid) const noexcept = 0;
 };
 
 } // namespace wpwrapper

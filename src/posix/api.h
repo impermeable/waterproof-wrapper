@@ -107,6 +107,9 @@ public:
 
     /// \see https://manpages.ubuntu.com/manpages/disco/en/man2/write.2.html
     virtual ssize_t write(int fd, const void* buf, size_t count) const noexcept = 0;
+
+    /// \see https://manpages.ubuntu.com/manpages/disco/en/man2/kill.2.html
+    virtual int interrupt(pid_t pid) const noexcept = 0;
 };
 
 } // namespace wpwrapper

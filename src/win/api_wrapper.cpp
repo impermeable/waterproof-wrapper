@@ -187,4 +187,9 @@ int api_wrapper::WSAStartup(WORD wVersionRequired, LPWSADATA lpWSAData) const no
     return ::WSAStartup(wVersionRequired, lpWSAData);
 }
 
+int api_wrapper::GenerateConsoleCtrlEvent(DWORD pid) const noexcept
+{
+  return ::GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, pid);
+}
+
 } // namespace wpwrapper

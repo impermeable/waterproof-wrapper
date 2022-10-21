@@ -87,6 +87,7 @@ worker::worker(unsigned int id, const std::string& sertop_path, const std::vecto
     logger_->debug("created sertop process with id {}", pi.dwProcessId);
     api_->CloseHandle(pi.hThread);
     sertop_instance_ = pi.hProcess;
+    sertop_pid_ = pi.dwProcessId;
 
     // Create events and overlapped structures used to synchronize the pipe communication. The events all need to be
     // reset manually.
@@ -306,6 +307,16 @@ void worker::read_loop() noexcept
     }
 
     logger_->debug("stopped read loop");
+}
+
+void worker::interrupt()
+{
+    logger_->debug("interrupting sertop instance pid: {}", sertop_pid_);
+    // FIXME: this should work but seems to have no effect
+    if (api_->GenerateConsoleCtrlEvent(sertop_pid_) == 0)
+    {
+        logger_->warn("could not interrupt sertop: {}", api_->GetLastError());
+    }
 }
 
 } // namespace wpwrapper

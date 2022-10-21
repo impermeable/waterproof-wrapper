@@ -35,6 +35,8 @@ struct request {
                 destroy,
         /// \brief Forward the request content to the worker.
                 forward,
+      /// \brief Interrupt the worker.
+                interrupt,
         /// \brief Stop the wrapper.
                 stop
     };
@@ -104,6 +106,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(request::verb, {
     { request::verb::create, "create" },
     { request::verb::destroy, "destroy" },
     { request::verb::forward, "forward" },
+    { request::verb::interrupt, "interrupt" },
     { request::verb::stop, "stop" },
 })
 
