@@ -49,7 +49,7 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
 
     addrinfo* addr;
 
-    result = api_->getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &addr);
+    result = api_->getaddrinfo("localhost", "0", &hints, &addr);
     if (result != 0)
     {
         api_->WSACleanup();
@@ -76,6 +76,20 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
         api_->WSACleanup();
         throw api_error("unable to bind server socket", err, logger_);
     }
+
+    struct sockaddr_in sin;
+    int addrlen = sizeof(sin);
+    if (getsockname(listen_socket_, (struct sockaddr *)&sin, &addrlen) != 0 || sin.sin_family != AF_INET || sizeof(sockaddr_in) != addrlen)
+    {
+        int err = api_->WSAGetLastError();
+        api_->freeaddrinfo(addr);
+        api_->closesocket(listen_socket_);
+        api_->WSACleanup();
+        throw api_error("unable to get name of server socket", err, logger_);
+    }
+
+    int server_port = htons(sin.sin_port);
+    logger_->info("got port {}", server_port);
 
     // Don't need this anymore.
     api_->freeaddrinfo(addr);
@@ -117,7 +131,7 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
 
     addrinfo* iaddr;
 
-    result = api_->getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &iaddr);
+    result = api_->getaddrinfo("localhost", std::to_string(server_port).c_str(), &hints, &iaddr);
     if (result != 0)
     {
         close_all(std::vector<socket>{listen_socket_, interrupt_[0], interrupt_[1]});
@@ -148,7 +162,8 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
     }
 
     // Start server threads.
-    logger_->debug("started listening on port {}", port);
+    // NOTE: Do not change this message, waterproof relies on the wording and extracts port from here.
+    logger_->info("started listening on port {}", server_port);
     running_ = true;
     accept_thread_ = std::thread(&server::accept_loop, this);
     read_thread_ = std::thread(&server::read_loop, this);
