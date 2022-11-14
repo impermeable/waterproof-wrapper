@@ -95,7 +95,7 @@ server::server(std::shared_ptr<wpwrapper::api> api_instance,
     }
 
     sockaddr_in socket_addr{};
-    socklen_t socket_info_length;
+    socklen_t socket_info_length = sizeof(socket_addr);
     if (getsockname(listen_socket_, (struct sockaddr*) &socket_addr, &socket_info_length) != 0) {
       int err = errno;
       api_->freeaddrinfo(addr);
