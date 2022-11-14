@@ -42,7 +42,7 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
 
     addrinfo* addr;
 
-    int result = api_->getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &addr);
+    int result = api_->getaddrinfo("localhost", nullptr, &hints, &addr);
     if (result < 0)
     {
         throw api_error("unable to resolve server address", result, logger_);
@@ -94,6 +94,18 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
         throw api_error("unable to bind server socket", err, logger_);
     }
 
+    sockaddr_in socket_addr{};
+    socklen_t socket_info_length;
+    if (getsockname(listen_socket_, (struct sockaddr*) &socket_addr, &socket_info_length) != 0) {
+      int err = errno;
+      api_->freeaddrinfo(addr);
+      api_->close(listen_socket_);
+      throw api_error("unable to get socket info after binding server socket", err, logger_);
+    }
+
+    int server_port = htons(socket_addr.sin_port);
+    logger_->info("got port {}", server_port);
+
     // Don't need this anymore.
     api_->freeaddrinfo(addr);
 
@@ -131,7 +143,7 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
 
     addrinfo* iaddr;
 
-    result = api_->getaddrinfo("localhost", std::to_string(port).c_str(), &hints, &iaddr);
+    result = api_->getaddrinfo("localhost", std::to_string(server_port).c_str(), &hints, &iaddr);
     if (result < 0)
     {
         close_all(std::vector<socket>{listen_socket_, interrupt_[0], interrupt_[1]});
@@ -194,7 +206,8 @@ server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
     }
 
     // Start the worker threads.
-    logger_->debug("started listening on port {}", port);
+    // NOTE: Do not change this message, waterproof relies on the wording and extracts port from here.
+    logger_->info("started listening on port {}", server_port);
     running_ = true;
     accept_thread_ = std::thread(&server::accept_loop, this);
     read_thread_ = std::thread(&server::read_loop, this);
