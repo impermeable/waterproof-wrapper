@@ -23,7 +23,7 @@
 
 namespace wpwrapper {
 
-server::server(uint16_t port, std::shared_ptr<wpwrapper::api> api_instance,
+server::server(std::shared_ptr<wpwrapper::api> api_instance,
         std::vector<wpwrapper::server::failure_callback> failure_callbacks,
         std::vector<wpwrapper::server::request_callback> request_callbacks,
         std::vector<wpwrapper::server::invalidate_callback> invalidate_callbacks)

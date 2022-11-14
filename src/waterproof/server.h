@@ -67,13 +67,12 @@ public:
     /// \brief Constructs a server that listens on port \c port.
     /// \details Creates three server threads: one for accepting new clients, one for reading from these clients and one
     /// for writing to these clients.
-    /// \param port The port to listen on.
     /// \param api_instance The API instance to use.
     /// \param failure_callbacks A list of callbacks to execute when an error occurs in any of the server threads.
     /// \param request_callbacks A list of callbacks to execute when a request is received from Waterproof.
     /// \param invalidate_callbacks A list of callbacks to execute when a worker instance becomes invalid.
     /// \throw api_error If the socket could not be created, or if any other API call fails.
-    server(uint16_t port, std::shared_ptr<api> api_instance, std::vector<failure_callback> failure_callbacks,
+    server(std::shared_ptr<api> api_instance, std::vector<failure_callback> failure_callbacks,
             std::vector<request_callback> request_callbacks, std::vector<invalidate_callback> invalidate_callbacks);
 
     /// \brief Destructs this worker.
