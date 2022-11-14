@@ -75,6 +75,7 @@ if (UNIX)
     # Don't link statically on UNIX platforms
     target_link_libraries(wpwrapper PUBLIC wpwrapper_lib -pthread)
 else ()
+    set(BUILD_SHARED_LIBS OFF)
     target_link_libraries(wpwrapper PUBLIC wpwrapper_lib -static -static-libgcc -static-libstdc++ -pthread)
 endif ()
 
