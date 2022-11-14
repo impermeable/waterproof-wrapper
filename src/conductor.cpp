@@ -63,7 +63,7 @@ conductor::conductor()
         queue_cv_.notify_one();
     };
 
-    server_ = std::make_unique<server>(config::port, api_,
+    server_ = std::make_unique<server>(api_,
             std::vector<server::failure_callback>{on_failure},
             std::vector<server::request_callback>{on_request},
             std::vector<server::invalidate_callback>{on_invalidate});
